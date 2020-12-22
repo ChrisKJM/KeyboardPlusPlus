@@ -1,18 +1,45 @@
-﻿using System;
+﻿/*
+MIT License
+
+Copyright (c) 2020 Krzysztof Jan Matusiak
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 using Gma.System.MouseKeyHook;
 
 namespace Keyboard__
 {
-    class Program
+    public class Program
     {
-        static Dictionary<string, string> keyMaps;
+        public static Dictionary<string, string> keyMaps;
+        public static string modifierKey = "Apps";
         static private IKeyboardMouseEvents m_GlobalHook;
         static bool isDown = false;
+        public static bool isF6 = false;
 
         static void Main(string[] args)
         {
@@ -65,7 +92,7 @@ namespace Keyboard__
         static private void OnKeyDown(object sender, KeyEventArgs e)
         {
             string keyCode = e.KeyCode.ToString();
-            if (keyCode == "Apps" && !isDown)
+            if (keyCode == modifierKey && !isDown)
             {
                 isDown = true;
                 e.SuppressKeyPress = true;
@@ -78,6 +105,16 @@ namespace Keyboard__
                 m_GlobalHook.KeyDown -= OnKeyDown;
                 SendKeys.SendWait(send);
                 m_GlobalHook.KeyDown += OnKeyDown;
+            }
+            else if (keyCode == "F6" && !isF6)
+            {
+                isF6 = true;
+                SettingsForms sf = new SettingsForms();
+                sf.Show();
+            }
+            else if (keyCode == "F7")
+            {
+                Environment.Exit(0);
             }
         }
 
@@ -92,7 +129,7 @@ namespace Keyboard__
             {
                 e.SuppressKeyPress = true;
             }
-            MessageBox.Show(e.KeyCode.ToString());
+            //MessageBox.Show(e.KeyCode.ToString());
         }
     }
 }
