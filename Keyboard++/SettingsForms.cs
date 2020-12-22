@@ -57,15 +57,11 @@ namespace Keyboard__
                 bc.txt_inputKey.Text = elem.Key;
                 bc.txt_outputString.Text = elem.Value;
             }
-            //UpdateButtonLocation();
-        }
 
-        private void UpdateButtonLocation()
-        {
-            BindControl last = binds.Last();
-            btn_add.Location = new Point(btn_add.Location.X, last.Location.Y + last.Size.Height + margin);
-            btn_delete.Location = new Point(btn_delete.Location.X, last.Location.Y + last.Size.Height + margin);
-            btn_save.Location = new Point(btn_save.Location.X, last.Location.Y + last.Size.Height + margin);
+            btn_add.BringToFront();
+            btn_save.SendToBack();
+
+            AutoScrollPosition = new Point(0, 0);
         }
 
         private void btn_add_Click(object sender, EventArgs e)
@@ -87,10 +83,12 @@ namespace Keyboard__
                     temp.Add(bc.txt_inputKey.Text, bc.txt_outputString.Text);
             }
             Program.keyMaps = temp;
+            Program.modifierKey = modifierBindControl1.txt_modifierKey.Text;
             JsonSerializer js = JsonSerializer.Create();
             StreamWriter sw = new StreamWriter(Program.jsonPath);
-            js.Serialize(sw, Program.keyMaps);
+            js.Serialize(sw, new object[] { Program.modifierKey, Program.keyMaps });
             sw.Close();
+            MessageBox.Show("Binds saved succesfully!");
             Close();
         }
 
@@ -107,7 +105,6 @@ namespace Keyboard__
             bindControl.Location = new Point(margin, (binds.Count + 1) * (26 + margin) + margin);
             binds.Add(bindControl);
             Controls.Add(bindControl);
-            UpdateButtonLocation();
             AutoScrollPosition = temp;
             return bindControl;
         }
@@ -120,7 +117,6 @@ namespace Keyboard__
                 binds.Remove(bindControl);
                 Controls.Remove(bindControl);
                 bindControl.Dispose();
-                UpdateButtonLocation();
                 return bindControl;
             }
             return null;

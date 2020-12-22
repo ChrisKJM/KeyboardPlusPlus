@@ -32,12 +32,13 @@ using System.Reflection;
 using Gma.System.MouseKeyHook;
 using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Keyboard__
 {
     public class Program
     {
-        public static Dictionary<string, string> keyMaps;
+        public static Dictionary<string, string> keyMaps = new Dictionary<string, string>();
         public static string modifierKey = "Apps";
         static private IKeyboardMouseEvents m_GlobalHook;
         static bool isDown = false;
@@ -48,21 +49,33 @@ namespace Keyboard__
         {
             //dodać możliwość zmieniania oraz zapisywania
             m_GlobalHook = Hook.GlobalEvents();
-            JsonSerializer js = JsonSerializer.Create();
-            StreamReader sr = new StreamReader(jsonPath);
-            keyMaps = (Dictionary<string, string>) js.Deserialize(sr, typeof(Dictionary<string, string>));
-            sr.Close();
+            
+            if (File.Exists(jsonPath))
+            {
+                JsonSerializer js = JsonSerializer.Create();
+                StreamReader sr = new StreamReader(jsonPath);
+                object[] test = (object[])js.Deserialize(sr, typeof(object[]));
+                modifierKey = (string)test[0];
+                keyMaps = (Dictionary<string, string>) ((JToken)test[1]).ToObject(typeof(Dictionary<string, string>));
+                sr.Close();
+                MessageBox.Show("Binds loaded succesfully!");
+            }
+            
             m_GlobalHook.KeyDown += OnKeyDown;
             m_GlobalHook.KeyUp += OnKeyUp;
+
+            MessageBox.Show("Press F6 to open settings. | Press F7 to quit.");
+
             Application.Run();
         }
 
         static private void OnKeyDown(object sender, KeyEventArgs e)
         {
             string keyCode = e.KeyCode.ToString();
-            if (keyCode == modifierKey && !isDown)
+            if (keyCode == modifierKey)
             {
-                isDown = true;
+                if (!isDown)
+                    isDown = true;
                 e.SuppressKeyPress = true;
             }
             else if (keyMaps.ContainsKey(keyCode) && isDown)
@@ -88,7 +101,7 @@ namespace Keyboard__
 
         static private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode.ToString() == "Apps")
+            if (e.KeyCode.ToString() == modifierKey)
             {
                 e.SuppressKeyPress = true;
                 isDown = false;
@@ -97,7 +110,6 @@ namespace Keyboard__
             {
                 e.SuppressKeyPress = true;
             }
-            //MessageBox.Show(e.KeyCode.ToString());
         }
     }
 }
