@@ -30,6 +30,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using Gma.System.MouseKeyHook;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Keyboard__
 {
@@ -40,50 +42,16 @@ namespace Keyboard__
         static private IKeyboardMouseEvents m_GlobalHook;
         static bool isDown = false;
         public static bool isF6 = false;
+        public static string jsonPath = @".\binds.json";
 
         static void Main(string[] args)
         {
             //dodać możliwość zmieniania oraz zapisywania
             m_GlobalHook = Hook.GlobalEvents();
-            keyMaps = new Dictionary<string, string>()
-            {
-                { "Q", "£" },
-                { "W", "­" },
-                { "E", "€" },
-                { "R", "‰" },
-                { "T", "∑" },
-                { "Y", "✓" },
-                { "U", "∏" },
-                { "I", "↑" },
-                { "O", "∞" },
-                { "P", "∫" },
-                { "A", "æ" },
-                { "S", "§" },
-                { "D", "¶" },
-                { "F", "•" },
-                { "G", "∧" },
-                { "H", "∨" },
-                { "J", "←" },
-                { "K", "↓" },
-                { "L", "→" },
-                { "Z", "♪" },
-                { "X", "𝄞" },
-                { "C", "♭" },
-                { "V", "♯" },
-                { "B", "₿" },
-                { "N", "✗" },
-                { "M", "¬" },
-                { "D1", "°" },
-                { "D2", "½" },
-                { "D3", "⅓" },
-                { "D4", "¼" },
-                { "D5", "√" },
-                { "D6", "±" },
-                { "D7", "≈" },
-                { "D8", "≠" },
-                { "D9", "≤" },
-                { "D0", "≥" }
-            };
+            JsonSerializer js = JsonSerializer.Create();
+            StreamReader sr = new StreamReader(jsonPath);
+            keyMaps = (Dictionary<string, string>) js.Deserialize(sr, typeof(Dictionary<string, string>));
+            sr.Close();
             m_GlobalHook.KeyDown += OnKeyDown;
             m_GlobalHook.KeyUp += OnKeyUp;
             Application.Run();

@@ -31,6 +31,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Keyboard__
 {
@@ -85,6 +87,10 @@ namespace Keyboard__
                     temp.Add(bc.txt_inputKey.Text, bc.txt_outputString.Text);
             }
             Program.keyMaps = temp;
+            JsonSerializer js = JsonSerializer.Create();
+            StreamWriter sw = new StreamWriter(Program.jsonPath);
+            js.Serialize(sw, Program.keyMaps);
+            sw.Close();
             Close();
         }
 
