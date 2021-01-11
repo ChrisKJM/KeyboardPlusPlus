@@ -24,29 +24,29 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Keyboard__
 {
-    public partial class BindControl : UserControl
+    public class Keyboard
     {
-        public BindControl()
+        public Dictionary<string, string> KeyMaps;
+        public string ModifierKey;
+        public bool IsDown = false;
+
+        public Keyboard(Dictionary<string, string> keyMaps, string modifierKey)
         {
-            InitializeComponent();
-            txt_inputKey.TextChanged += (object sender, EventArgs e) => ((SettingsForms)ParentForm).UpdateBinds();
-            txt_outputString.TextChanged += (object sender, EventArgs e) => ((SettingsForms)ParentForm).UpdateBinds();
+            KeyMaps = keyMaps;
+            ModifierKey = modifierKey;
         }
 
-        private void txt_inputKey_KeyDown(object sender, KeyEventArgs e)
+        public string GetOutput(string key)
         {
-            e.SuppressKeyPress = true;
-            txt_inputKey.Text = e.KeyCode.ToString();
+            string output = "";
+            KeyMaps.TryGetValue(key, out output);
+            return output;
         }
     }
 }

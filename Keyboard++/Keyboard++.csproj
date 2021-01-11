@@ -65,11 +65,18 @@
     <Compile Include="BindControl.Designer.cs">
       <DependentUpon>BindControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Keyboard.cs" />
     <Compile Include="ModifierBindControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ModifierBindControl.Designer.cs">
       <DependentUpon>ModifierBindControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OtherForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OtherForm.Designer.cs">
+      <DependentUpon>OtherForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,6 +102,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ModifierBindControl.resx">
       <DependentUpon>ModifierBindControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OtherForm.resx">
+      <DependentUpon>OtherForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

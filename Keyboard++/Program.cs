@@ -38,25 +38,26 @@ namespace Keyboard__
 {
     public class Program
     {
-        public static Dictionary<string, string> keyMaps = new Dictionary<string, string>();
-        public static string modifierKey = "Apps";
-        static private IKeyboardMouseEvents m_GlobalHook;
-        static bool isDown = false;
-        public static bool isF6 = false;
-        public static string jsonPath = @".\binds.json";
+        public static List<Keyboard> Keyboards = new List<Keyboard>();
+        private static IKeyboardMouseEvents m_GlobalHook;
+        public static bool IsSettings = false;
+        public static string JsonPath = @".\binds.json";
+        public static string SettingsKey = "F6";
+        public static string ExitKey = "F7";
 
         static void Main(string[] args)
         {
-            //dodać możliwość zmieniania oraz zapisywania
             m_GlobalHook = Hook.GlobalEvents();
             
-            if (File.Exists(jsonPath))
+            if (File.Exists(JsonPath))
             {
                 JsonSerializer js = JsonSerializer.Create();
-                StreamReader sr = new StreamReader(jsonPath);
-                object[] test = (object[])js.Deserialize(sr, typeof(object[]));
-                modifierKey = (string)test[0];
-                keyMaps = (Dictionary<string, string>) ((JToken)test[1]).ToObject(typeof(Dictionary<string, string>));
+                StreamReader sr = new StreamReader(JsonPath);
+                Dictionary<string, object> temp = JsonConvert.DeserializeObject<Dictionary<string, object>>(sr.ReadToEnd());
+                Keyboards = (List<Keyboard>) ((JArray) temp["Keyboards"]).ToObject(typeof(List<Keyboard>));
+                SettingsKey = (string) temp["SettingsKey"];
+                ExitKey = (string) temp["ExitKey"];
+
                 sr.Close();
                 MessageBox.Show("Binds loaded succesfully!");
             }
@@ -64,7 +65,7 @@ namespace Keyboard__
             m_GlobalHook.KeyDown += OnKeyDown;
             m_GlobalHook.KeyUp += OnKeyUp;
 
-            MessageBox.Show("Press F6 to open settings. | Press F7 to quit.");
+            MessageBox.Show($"Press {SettingsKey} to open settings. | Press {ExitKey} to quit.");
 
             Application.Run();
         }
@@ -72,28 +73,33 @@ namespace Keyboard__
         static private void OnKeyDown(object sender, KeyEventArgs e)
         {
             string keyCode = e.KeyCode.ToString();
-            if (keyCode == modifierKey)
+
+            foreach (Keyboard kb in Keyboards)
             {
-                if (!isDown)
-                    isDown = true;
-                e.SuppressKeyPress = true;
+                if (keyCode == kb.ModifierKey && !IsSettings)
+                {
+                    e.SuppressKeyPress = true;
+                    kb.IsDown = true;
+                    return;
+                }
+                else if (kb.KeyMaps.ContainsKey(keyCode) && kb.IsDown && !IsSettings)
+                {
+                    e.SuppressKeyPress = true;
+                    string send = "";
+                    kb.KeyMaps.TryGetValue(keyCode, out send);
+                    m_GlobalHook.KeyDown -= OnKeyDown;
+                    SendKeys.SendWait(send);
+                    m_GlobalHook.KeyDown += OnKeyDown;
+                    return;
+                }
             }
-            else if (keyMaps.ContainsKey(keyCode) && isDown)
+            if (keyCode == SettingsKey && !IsSettings)
             {
-                e.SuppressKeyPress = true;
-                string send = "";
-                keyMaps.TryGetValue(keyCode, out send);
-                m_GlobalHook.KeyDown -= OnKeyDown;
-                SendKeys.SendWait(send);
-                m_GlobalHook.KeyDown += OnKeyDown;
-            }
-            else if (keyCode == "F6" && !isF6)
-            {
-                isF6 = true;
+                IsSettings = true;
                 SettingsForms sf = new SettingsForms();
                 sf.Show();
             }
-            else if (keyCode == "F7")
+            else if (keyCode == ExitKey)
             {
                 Environment.Exit(0);
             }
@@ -101,14 +107,19 @@ namespace Keyboard__
 
         static private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode.ToString() == modifierKey)
+            string keyCode = e.KeyCode.ToString();
+
+            foreach (Keyboard kb in Keyboards)
             {
-                e.SuppressKeyPress = true;
-                isDown = false;
-            }
-            else if (keyMaps.ContainsKey(e.KeyCode.ToString()))
-            {
-                e.SuppressKeyPress = true;
+                if (keyCode == kb.ModifierKey)
+                {
+                    e.SuppressKeyPress = true;
+                    kb.IsDown = false;
+                }
+                else if (kb.KeyMaps.ContainsKey(e.KeyCode.ToString()) && kb.IsDown)
+                {
+                    e.SuppressKeyPress = true;
+                }
             }
         }
     }

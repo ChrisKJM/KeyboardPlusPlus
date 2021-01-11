@@ -39,6 +39,7 @@ namespace Keyboard__
         public ModifierBindControl()
         {
             InitializeComponent();
+            txt_modifierKey.TextChanged += (object sender, EventArgs e) => ((SettingsForms)ParentForm).UpdateModifier();
         }
 
         private void txt_modifierKey_KeyDown(object sender, KeyEventArgs e)
