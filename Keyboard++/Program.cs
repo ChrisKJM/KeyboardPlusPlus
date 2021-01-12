@@ -61,6 +61,10 @@ namespace Keyboard__
                 sr.Close();
                 MessageBox.Show("Binds loaded succesfully!");
             }
+            else
+            {
+                Keyboards.Add(new Keyboard(new Dictionary<string, string>(), ""));
+            }
             
             m_GlobalHook.KeyDown += OnKeyDown;
             m_GlobalHook.KeyUp += OnKeyUp;

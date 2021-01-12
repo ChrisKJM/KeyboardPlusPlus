@@ -36,8 +36,8 @@
             this.btn_addKeyboard = new System.Windows.Forms.Button();
             this.btn_deleteKeyboard = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.modifierBindControl1 = new Keyboard__.ModifierBindControl();
             this.btn_other = new System.Windows.Forms.Button();
+            this.modifierBindControl1 = new Keyboard__.ModifierBindControl();
             this.SuspendLayout();
             // 
             // btn_addBind
@@ -136,13 +136,6 @@
             this.label1.TabIndex = 11;
             this.label1.Text = "Binds:";
             // 
-            // modifierBindControl1
-            // 
-            this.modifierBindControl1.Location = new System.Drawing.Point(12, 52);
-            this.modifierBindControl1.Name = "modifierBindControl1";
-            this.modifierBindControl1.Size = new System.Drawing.Size(222, 26);
-            this.modifierBindControl1.TabIndex = 4;
-            // 
             // btn_other
             // 
             this.btn_other.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -155,6 +148,13 @@
             this.btn_other.Text = "Other";
             this.btn_other.UseVisualStyleBackColor = false;
             this.btn_other.Click += new System.EventHandler(this.btn_other_Click);
+            // 
+            // modifierBindControl1
+            // 
+            this.modifierBindControl1.Location = new System.Drawing.Point(12, 52);
+            this.modifierBindControl1.Name = "modifierBindControl1";
+            this.modifierBindControl1.Size = new System.Drawing.Size(222, 26);
+            this.modifierBindControl1.TabIndex = 4;
             // 
             // SettingsForms
             // 
